@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.stefanheimberg.example</groupId>
+        <artifactId>example-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    
+    <artifactId>example-systemtests</artifactId>
+    <packaging>jar</packaging>
+    
+    <properties>
+        <!-- datasource properties -->
+        <datasource.name>ExampleDatasource</datasource.name>
+        <datasource.jndi>java:jboss/datasources/ExampleDatasource</datasource.jndi>
+        <datasource.connection>jdbc:h2:${project.build.directory}/h2/Example_stest.db;TRACE_LEVEL_FILE=2;TRACE_LEVEL_SYSTEM_OUT=2</datasource.connection>
+        <datasource.username>sa</datasource.username>
+        <datasource.password>sa</datasource.password>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.github.stefanheimberg.example</groupId>
+            <artifactId>example-web</artifactId>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>${maven.multiModuleProjectDirectory}/config/wildfly/scripts</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/wildfly</targetPath>
+            </resource>
+        </resources>
+        
+        <plugins>
+            <plugin>            
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <skipITs>${skipSTs}</skipITs>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-systemtestdb</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                        <configuration>
+                            <driver>org.h2.Driver</driver>
+                            <url>${datasource.connection}</url>
+                            <user>${datasource.username}</user>
+                            <password>${datasource.password}</password>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.stefanheimberg.example</groupId>
+                        <artifactId>example-database</artifactId>
+                        <version>${example.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>load-testdata-into-systemtestdb</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <driver>org.h2.Driver</driver>
+                            <url>${datasource.connection}</url>
+                            <username>${datasource.username}</username>
+                            <password>${datasource.password}</password>
+                            <srcFiles>
+                                <srcFile>src/sql/TESTDATA.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>start-wildfly-for-systemtests</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipSTs}</skip>
+                        </configuration>
+                    </execution>
+                    
+                    <execution>
+                        <id>configure-wildfly-for-systemtests</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>execute-commands</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipSTs}</skip>
+                            <execute-commands>
+                                <batch>false</batch>
+                                <scripts>
+                                    <script>${project.build.directory}/wildfly/config.cli</script>
+                                </scripts>
+                            </execute-commands>
+                            <jbossHome>${project.build.directory}/wildfly-run/wildfly-${wildfly.version}</jbossHome>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>deploy-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipSTs}</skip>
+                            <groupId>com.github.stefanheimberg.example</groupId>
+                            <artifactId>example-web</artifactId>
+                        </configuration>
+                    </execution>
+                    
+                    <execution>
+                        <id>shutdown-wildfly-after-systemtests</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>shutdown</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipSTs}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>

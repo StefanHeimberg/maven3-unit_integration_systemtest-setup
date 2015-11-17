@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.stefanheimberg.example</groupId>
+        <artifactId>example-pom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    
+    <artifactId>example-parent</artifactId>
+    <packaging>pom</packaging>
+    
+    <modules>
+        <module>example-database</module>
+        <module>example-web</module>
+        <module>example-integrationtests</module>
+        <module>example-systemtests</module>
+    </modules>
+    
+    <properties>
+        <!-- maven default properties -->
+        <encoding>UTF-8</encoding>
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ejb.ejbVersion>3.2</ejb.ejbVersion>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <deployAtEnd>true</deployAtEnd>
+        <installAtEnd>true</installAtEnd>
+        
+        <!-- Test properties -->
+        <skipTests>false</skipTests>
+        <skipITs>false</skipITs>
+        <skipSTs>false</skipSTs>
+        
+        <!-- java ee 7 spec -->
+        <validation.version>1.1.0.Final</validation.version>
+        <ejb.version>${ejb.ejbVersion}</ejb.version>
+        <rest.version>2.0.1</rest.version>
+        <cdi.version>1.1-20130918</cdi.version>
+        
+        <!-- Wildfly mit Java EE 7 -->
+        <wildfly.version>9.0.1.Final</wildfly.version>
+        
+        <!-- Hibernate version ist mit wildfly 9.0.1.Final abgestummen -->
+        <hibernate.version>4.3.10.Final</hibernate.version>
+        
+        <!-- external dependencies versions -->
+        <log4j.version>2.4</log4j.version>
+        <flyway.version>3.2.1</flyway.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>1.10.19</mockito.version>
+        <wildfly-arquillian.version>1.1.0.Alpha1</wildfly-arquillian.version>
+        <arquillian.version>1.1.10.Final</arquillian.version>
+        
+        <!-- H2 version ist mit wildfly 9.0.1.Final abgestummen -->
+        <h2.version>1.3.176</h2.version>
+        
+        <!-- plugin dependencies -->
+        <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
+        <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
+        <maven-war-plugin.version>2.2</maven-war-plugin.version>
+        <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
+        <maven-install-plugin.version>2.4</maven-install-plugin.version>
+        <maven-deploy-plugin.version>2.7</maven-deploy-plugin.version>
+        <maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
+        <wildfly-maven-plugin.version>1.1.0.Alpha4</wildfly-maven-plugin.version>
+        <flyway-maven-plugin.version>${flyway.version}</flyway-maven-plugin.version>
+        <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
+        
+        <!-- build properties -->
+        <wildfly.admin.user>admin</wildfly.admin.user>
+        <wildfly.admin.password>admin.1234</wildfly.admin.password>
+    </properties>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- ========================================================== -->
+            <!-- Import External Dependency Definitions -->
+            <!-- ========================================================== -->
+            
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${arquillian.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            
+            <!-- ========================================================== -->
+            <!-- Java EE 7 Specification Dependencies -->
+            <!-- ========================================================== -->
+            
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${validation.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>javax.ejb</groupId>
+                <artifactId>javax.ejb-api</artifactId>
+                <version>${ejb.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>${cdi.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${rest.version}</version>
+            </dependency>
+            
+            <!-- ========================================================== -->
+            <!-- Database & Persistence dependencies -->
+            <!-- ========================================================== -->
+            
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <!-- INFO: excluded weil mit jboss-logging von wildfly nicht kompatibel ist -->
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <!-- INFO: excluded weil mit jboss-logging von wildfly nicht kompatibel ist -->
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging-annotations</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>1.0.0.Final</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
+        
+            <!-- ========================================================== -->
+            <!-- Testing dependencies -->
+            <!-- ========================================================== -->
+            
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.wildfly.arquillian</groupId>
+                <artifactId>wildfly-arquillian-container-remote</artifactId>
+                <version>${wildfly-arquillian.version}</version>
+            </dependency>
+            
+        </dependencies>
+    </dependencyManagement>
+    
+    <build>
+        <defaultGoal>package</defaultGoal>
+        <pluginManagement>
+            <plugins>
+                <!-- ====================================================== -->
+                <!-- Maven default Plugins -->
+                <!-- ====================================================== -->
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven-clean-plugin.version}</version>
+                </plugin>
+                
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+                
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+            
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+            
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+            
+                <plugin>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                            </goals>
+                            <phase>integration-test</phase>
+                        </execution>
+                        <execution>
+                            <id>verify</id>
+                            <goals>
+                                <goal>verify</goal>
+                            </goals>
+                            <phase>verify</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+                </plugin>
+            
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-install-plugin.version}</version>
+                </plugin>
+            
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                </plugin>
+                
+                <!-- ====================================================== -->
+                <!-- Flyway Plugins -->
+                <!-- ====================================================== -->
+                
+                <plugin>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-maven-plugin</artifactId>
+                    <version>${flyway-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.h2database</groupId>
+                            <artifactId>h2</artifactId>
+                            <version>${h2.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                
+                <!-- ====================================================== -->
+                <!-- Wildfly Plugins -->
+                <!-- ====================================================== -->
+                
+                <plugin>
+                    <groupId>org.wildfly.plugins</groupId>
+                    <artifactId>wildfly-maven-plugin</artifactId>
+                    <version>${wildfly-maven-plugin.version}</version>
+                    <configuration>
+                        <add-user>
+                            <users>
+                                <user>
+                                    <username>${wildfly.admin.user}</username>
+                                    <password>${wildfly.admin.password}</password>
+                                </user>
+                            </users>
+                        </add-user>
+                    </configuration>
+                </plugin>
+                
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sql-maven-plugin</artifactId>
+                    <version>${sql-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.h2database</groupId>
+                            <artifactId>h2</artifactId>
+                            <version>${h2.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    
+</project>

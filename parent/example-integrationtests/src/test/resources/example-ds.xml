@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns="http://www.ironjacamar.org/doc/schema/datasources_1_1.xsd">
+    
+    <datasource jndi-name="java:jboss/datasources/ExampleDatasource" pool-name="ExampleDatasource" enabled="true">
+        <connection-url>jdbc:h2:mem:${DB_NAME};DB_CLOSE_DELAY=-1;TRACE_LEVEL_SYSTEM_OUT=2</connection-url>
+        <driver>h2</driver>
+        <security>
+            <user-name>sa</user-name>
+            <password>sa</password>
+        </security>
+    </datasource>
+
+</datasources>

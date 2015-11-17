@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    
+    <persistence-unit name="example" transaction-type="JTA">
+        <validation-mode>CALLBACK</validation-mode>
+        <jta-data-source>java:jboss/datasources/ExampleDatasource</jta-data-source>
+        <properties>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create" />
+            
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+            
+            <!--
+            # Write all SQL statements to console. This is an alternative to
+            # setting the log category org.hibernate.SQL to debug.
+            # e.g. true | false
+            -->
+            <property name="hibernate.show_sql" value="true" />
+
+            <!--
+            # Pretty print the SQL in the log and console. e.g. true | false
+            -->
+            <property name="hibernate.format_sql" value="true" />
+
+            <!--
+            # If turned on, Hibernate will generate comments inside the SQL, for
+            # easier debugging, defaults to false.
+            # e.g. true | false
+            -->
+            <property name="hibernate.use_sql_comments" value="true" />
+
+            <!--
+            # If enabled, Hibernate will collect statistics useful for performance
+            # tuning. e.g. true | false
+            -->
+            <property name="hibernate.generate_statistics" value="true" />
+        </properties>
+    </persistence-unit>
+    
+</persistence>

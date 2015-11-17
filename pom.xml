@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+    <modelVersion>4.0.0</modelVersion>
+	
+    <groupId>com.github.stefanheimberg.example</groupId>
+    <artifactId>example-pom</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <modules>
+        <module>parent</module>
+    </modules>
+    
+    <properties>
+        <example.version>1.0-SNAPSHOT</example.version>
+    </properties>
+    
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.stefanheimberg.example</groupId>
+                <artifactId>example-database</artifactId>
+                <version>${example.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.github.stefanheimberg.example</groupId>
+                <artifactId>example-web</artifactId>
+                <version>${example.version}</version>
+                <classifier>classes</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.github.stefanheimberg.example</groupId>
+                <artifactId>example-web</artifactId>
+                <version>${example.version}</version>
+                <type>war</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+</project>

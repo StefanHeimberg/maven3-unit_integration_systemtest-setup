@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    
+    <persistence-unit name="example" transaction-type="JTA">
+        <validation-mode>CALLBACK</validation-mode>
+        <properties>
+            <!-- in my example application i use H2 Filebased DB on Production... -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+            
+            <!--
+            # Automatically validates or exports schema DDL to the database when
+            # the SessionFactory is created. With create-drop, the database schema will be dropped when the SessionFactory is closed explicitly.
+            # e.g. validate | update | create | create-drop
+            -->
+            <property name="hibernate.hbm2ddl.auto" value="validate" />
+        </properties>
+    </persistence-unit>
+    
+</persistence>

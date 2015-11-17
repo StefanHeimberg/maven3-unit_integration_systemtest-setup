@@ -1,0 +1,24 @@
+connect
+
+# ============================================================================
+# Datasource: ${datasource.name}
+# ============================================================================
+
+# Datasource hinzufügen
+/subsystem=datasources/data-source=${datasource.name}:add( \
+    jndi-name="${datasource.jndi}", \
+    driver-name=h2, \
+    connection-url="${datasource.connection}", \
+    user-name="${datasource.username}", \
+    password="${datasource.password}" \
+)
+
+# ============================================================================
+# EE Services
+# ============================================================================
+
+# Standard Datasource anpassen
+/subsystem=ee/service=default-bindings:write-attribute( \
+    name="datasource", \
+    value="${datasource.jndi}" \
+)
