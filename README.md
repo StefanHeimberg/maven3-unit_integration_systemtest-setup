@@ -2,6 +2,20 @@
 
 Example Projekt with a possible Setup for Unit / Integration / System Tests
 
+## Requirements
+
+- **Maven 3.3** (because usage of maven property *${maven.multiModuleProjectDirectory}*)
+
+There is also a Problem with NetBeans 8.1. NetBeans cannot resolve dependencies with classifier. **IntelliJ 14** or newer works as expected.
+
+    <dependency>
+        <groupId>com.github.stefanheimberg.example</groupId>
+        <artifactId>example-web</artifactId>
+        <classifier>classes</classifier>
+        <scope>test</scope>
+    </dependency>
+
+
 ## Unit-Tests
 
 - Only one Class / Business function ist tested
@@ -9,6 +23,7 @@ Example Projekt with a possible Setup for Unit / Integration / System Tests
 - No Container
 - Smallest possible unit to test
 - Dependencies to other Classes are Mocked. (Mockito)
+- Tests are inside *src/test* of the artifact where the unit under test class reside
 
 ## Integration-Tests
 
@@ -20,6 +35,7 @@ Example Projekt with a possible Setup for Unit / Integration / System Tests
 - DB Tables are generated from JPA DDL (hibernate.hbm2ddl.auto=create-drop)
 - Arquillian Deployments contains only the classes neede for the testcase itself
 - Testdata loaded manually inside @Test or @Before method... (test data builders...)
+- Tests are separated from other code
 
 ## System-Tests
 
@@ -28,4 +44,5 @@ Example Projekt with a possible Setup for Unit / Integration / System Tests
 - Read Database used because we need (hibernate.hbm2ddl.auto=validate)
 - Database setup before deployment with maven-flyway-plugin
 - Testdata loaded with sql-maven-plugin
+- Tests are separated from other code
 
