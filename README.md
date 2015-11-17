@@ -16,6 +16,17 @@ There is also a Problem with NetBeans 8.1. NetBeans cannot resolve dependencies 
     </dependency>
 
 
+## Quickstart
+
+    # run only unit tests
+    mvn clean test
+    
+    # run integration tests (disabled by default)
+    mvn clean verify -DskipITs=false
+    
+    # run system tests (disabled by default)
+    mvn clean verify -DskipSTs=false
+
 ## Unit-Tests
 
 - Only one Class / Business function ist tested

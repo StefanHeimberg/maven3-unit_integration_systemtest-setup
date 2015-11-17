@@ -21,11 +21,21 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -33,6 +43,9 @@ import javax.ejb.EJB;
  */
 @RunWith(Arquillian.class)
 public class CompanyRepositoryIT {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @EJB
     private CompanyRepository companyRepository;
@@ -51,9 +64,26 @@ public class CompanyRepositoryIT {
         return war;
     }
 
+    @Before
+    @Transactional
+    public void setupTestData() {
+        Company company = new Company();
+        company.setName("Swisscom");
+        em.persist(company);
+
+        company = new Company();
+        company.setName("Cablecom");
+        em.persist(company);
+
+        em.clear();
+        em.getEntityManagerFactory().getCache().evictAll();
+    }
+
     @Test
     public void assert_company_resource_can_be_found() {
-        assertNotNull(companyRepository);
+        final Company company = companyRepository.findById(2l);
+        assertThat(company, is(notNullValue()));
+        assertThat(company.getName(), is(equalTo("Cablecom")));
     }
 
 }

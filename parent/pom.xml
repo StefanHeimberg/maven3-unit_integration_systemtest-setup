@@ -36,14 +36,15 @@
         
         <!-- Test properties -->
         <skipTests>false</skipTests>
-        <skipITs>false</skipITs>
-        <skipSTs>false</skipSTs>
+        <skipITs>true</skipITs>
+        <skipSTs>true</skipSTs>
         
         <!-- java ee 7 spec -->
         <validation.version>1.1.0.Final</validation.version>
         <ejb.version>${ejb.ejbVersion}</ejb.version>
         <rest.version>2.0.1</rest.version>
         <cdi.version>1.1-20130918</cdi.version>
+        <jta.version>1.2</jta.version>
         
         <!-- Wildfly mit Java EE 7 -->
         <wildfly.version>9.0.1.Final</wildfly.version>
@@ -123,6 +124,12 @@
                 <groupId>javax.enterprise</groupId>
                 <artifactId>cdi-api</artifactId>
                 <version>${cdi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>javax.transaction-api</artifactId>
+                <version>${jta.version}</version>
             </dependency>
             
             <dependency>
