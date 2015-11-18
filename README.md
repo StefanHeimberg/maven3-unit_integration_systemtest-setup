@@ -57,3 +57,7 @@ There is also a Problem with NetBeans 8.1. NetBeans cannot resolve dependencies 
 - Testdata loaded with sql-maven-plugin
 - Tests are separated from other code
 
+
+## Links
+
+Linked at StackOverflow [Maven: How can I setup maven to run unit test and integration test separately](http://stackoverflow.com/a/33774026/4429292)
