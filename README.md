@@ -52,7 +52,7 @@ There is also a Problem with NetBeans 8.1. NetBeans cannot resolve dependencies 
 
 - Full Wildfly deployment of the final WAR/EAR File.
 - Container configuration via *.cli command line commands
-- Read Database used because we need (hibernate.hbm2ddl.auto=validate)
+- Real Database used because we need (hibernate.hbm2ddl.auto=validate)
 - Database setup before deployment with maven-flyway-plugin
 - Testdata loaded with sql-maven-plugin
 - Tests are separated from other code
